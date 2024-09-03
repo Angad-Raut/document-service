@@ -1,0 +1,39 @@
+version: '1.0'
+services:
+  mongodb:
+    container_name: mongoDB
+    image: mongo
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+    environment:
+      MONGODB_DATABASE: documentsDb
+      MONGODB_PASSWORD: angad@db
+    networks:
+      - document-details-network
+
+  document-service-app:
+    image: document-details
+    restart: always
+    build: .
+    ports:
+      - "1991:1991"
+    depends_on:
+      - mongodb
+    environment:
+      MONGODB_HOST: mongoDB
+      MONGODB_USER: angad
+      MONGODB_PASSWORD: angad@db
+      MONGODB_PORT: 27017
+    networks:
+      - document-details-network
+
+networks:
+  document-details-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local
+
